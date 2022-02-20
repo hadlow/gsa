@@ -1,15 +1,66 @@
+const SCORE_GAP: isize = -4;
+const SCORE_MISMATCH: isize = -3;
+const SCORE_MATCH: isize = 1;
 
-fn align(seq1: &str, seq2: &str) -> String
+fn debug_matrix(seq_1: &String, seq_2: &String, matrix: Vec<Vec<isize>>)
 {
+    print!(" \t-\t");
+
+    for c in seq_1.chars()
+    {
+        print!("{}\t", c);
+    }
+
+    print!("\n");
+
+    for (i, c) in seq_2.chars().enumerate()
+    {
+        print!("{}", c);
+        //println!("{:?}", y);
+        print!("\n");
+    }
+}
+
+fn get_score(char_1: char, char_2: char) -> isize
+{
+    if char_1 == char_2
+    {
+        SCORE_MATCH
+    } else {
+        SCORE_MISMATCH
+    }
+}
+
+fn new_matrix(x: usize, y: usize) -> Vec<Vec<isize>>
+{
+    let mut matrix: Vec<Vec<isize>> = vec![vec![0; x + 1]; y + 1];
+
+    for n in 0..x + 1
+    {
+        matrix[0][n] = (n as isize) * SCORE_GAP;
+    }
+
+    for n in 0..y + 1
+    {
+        matrix[n][0] = (n as isize) * SCORE_GAP;
+    }
+
+    matrix
+}
+
+fn align(seq_1: &String, seq_2: &String) -> String
+{
+    let mut matrix: Vec<Vec<isize>> = new_matrix(seq_1.len(), seq_2.len());
+
+    debug_matrix(&seq_1, &seq_2, matrix);
+
     String::new()
 }
 
 fn main()
 {
-    let seq1: &str = "ACGGCTC";
-    let seq2: &str = "ATGGCCTC";
+    let seq_1: String = String::from("ACGGCTC");
+    let seq_2: String = String::from("ATGGCCTC");
 
-    let map = align(seq1, seq2);
-
-    println!("Hello, world!");
+    let _map = align(&seq_1, &seq_2);
 }
