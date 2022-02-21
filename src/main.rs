@@ -1,8 +1,10 @@
+use std::cmp;
+
 const SCORE_GAP: isize = -4;
 const SCORE_MISMATCH: isize = -3;
 const SCORE_MATCH: isize = 1;
 
-fn debug_matrix(seq_1: &String, seq_2: &String, matrix: Vec<Vec<isize>>)
+fn debug_matrix(seq_1: &String, seq_2: &String, matrix: &Vec<Vec<isize>>)
 {
     // Display first -
     print!(" \t-\t");
@@ -63,12 +65,58 @@ fn new_matrix(x: usize, y: usize) -> Vec<Vec<isize>>
     matrix
 }
 
+fn new_traceback(x: usize, y: usize) -> Vec<Vec<char>>
+{
+    let mut matrix: Vec<Vec<char>> = vec![vec!['0'; x + 1]; y + 1];
+
+    for n in 0..x + 1
+    {
+        matrix[0][n] = 'l';
+    }
+
+    for n in 0..y + 1
+    {
+        matrix[n][0] = 'u';
+    }
+
+    matrix[0][0] = 'd';
+
+    matrix
+}
+
 fn align(seq_1: &String, seq_2: &String) -> String
 {
     let mut matrix: Vec<Vec<isize>> = new_matrix(seq_1.len(), seq_2.len());
+    let mut traceback: Vec<Vec<char>> = new_traceback(seq_1.len(), seq_2.len());
 
-    debug_matrix(&seq_1, &seq_2, matrix);
+    let mut l: isize = 0;
+    let mut u: isize = 0;
+    let mut d: isize = 0;
 
+    for i in 1..seq_2.len() + 1
+    {
+        for j in 1..seq_1.len() + 1
+        {
+            l = matrix[i][j - 1] + SCORE_GAP;
+            u = matrix[i - 1][j] + SCORE_GAP;
+            d = matrix[i - 1][j - 1] + get_score(seq_2.chars().nth(i - 1).unwrap(), seq_1.chars().nth(j - 1).unwrap());
+
+            matrix[i][j] = cmp::max(cmp::max(l, u), d);
+
+            if matrix[i][j] == l
+            {
+				traceback[i][j] = 'l'
+            } else if matrix[i][j] == u {
+				traceback[i][j] = 'u'
+            } else {
+				traceback[i][j] = 'd'
+            }
+        }
+    }
+
+    debug_matrix(&seq_1, &seq_2, &matrix);
+    //debug_matrix(&seq_1, &seq_2, traceback);
+    
     String::new()
 }
 
