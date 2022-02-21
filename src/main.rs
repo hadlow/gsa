@@ -4,19 +4,34 @@ const SCORE_MATCH: isize = 1;
 
 fn debug_matrix(seq_1: &String, seq_2: &String, matrix: Vec<Vec<isize>>)
 {
+    // Display first -
     print!(" \t-\t");
 
+    // Display sequence 1 split with tabs
     for c in seq_1.chars()
     {
         print!("{}\t", c);
+    }
+
+    print!("\n-\t");
+
+    // Display first row of matrix
+    for col in &matrix[0]
+    {
+        print!("{}\t", col);
     }
 
     print!("\n");
 
     for (i, c) in seq_2.chars().enumerate()
     {
-        print!("{}", c);
-        //println!("{:?}", y);
+        print!("{}\t", c);
+
+        for col in &matrix[i + 1]
+        {
+            print!("{}\t", col);
+        }
+
         print!("\n");
     }
 }
