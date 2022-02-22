@@ -114,13 +114,10 @@ fn align(seq_1: &String, seq_2: &String) -> (Vec<Vec<isize>>, Vec<Vec<char>>)
         }
     }
 
-    debug_matrix(&seq_1, &seq_2, &matrix);
-    //debug_matrix(&seq_1, &seq_2, traceback);
-    
     (matrix, traceback)
 }
 
-fn render_alignment(seq_1: &String, seq_2: &String, matrix: &Vec<Vec<isize>>, traceback: &Vec<Vec<char>>)
+fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>)
 {
     let mut x: Vec<char> = Vec::new();
     let mut y: Vec<char> = Vec::new();
@@ -157,8 +154,17 @@ fn render_alignment(seq_1: &String, seq_2: &String, matrix: &Vec<Vec<isize>>, tr
         }
     }
 
-    println!("{:?}", x);
-    println!("{:?}", y);
+    while let Some(n) = x.pop() {
+        print!("{}\t", n);
+    }
+
+    print!("\n");
+
+    while let Some(n) = y.pop() {
+        print!("{}\t", n);
+    }
+
+    print!("\n");
 }
 
 fn main()
@@ -168,5 +174,5 @@ fn main()
 
     let (matrix, traceback) = align(&seq_1, &seq_2);
 
-    render_alignment(&seq_1, &seq_2, &matrix, &traceback);
+    render_alignment(&seq_1, &seq_2, &traceback);
 }
