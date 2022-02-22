@@ -1,7 +1,7 @@
 use std::cmp;
 
-const SCORE_GAP: isize = -4;
-const SCORE_MISMATCH: isize = -3;
+const SCORE_GAP: isize = -1;
+const SCORE_MISMATCH: isize = -1;
 const SCORE_MATCH: isize = 1;
 
 fn debug_matrix(seq_1: &String, seq_2: &String, matrix: &Vec<Vec<isize>>)
@@ -84,14 +84,14 @@ fn new_traceback(x: usize, y: usize) -> Vec<Vec<char>>
     matrix
 }
 
-fn align(seq_1: &String, seq_2: &String) -> (Vec<Vec<isize>>, Vec<Vec<char>>)
+fn align(seq_1: &String, seq_2: &String) -> Vec<Vec<char>>
 {
     let mut matrix: Vec<Vec<isize>> = new_matrix(seq_1.len(), seq_2.len());
     let mut traceback: Vec<Vec<char>> = new_traceback(seq_1.len(), seq_2.len());
 
-    let mut l: isize = 0;
-    let mut u: isize = 0;
-    let mut d: isize = 0;
+    let mut l: isize;
+    let mut u: isize;
+    let mut d: isize;
 
     for i in 1..seq_2.len() + 1
     {
@@ -114,10 +114,10 @@ fn align(seq_1: &String, seq_2: &String) -> (Vec<Vec<isize>>, Vec<Vec<char>>)
         }
     }
 
-    (matrix, traceback)
+    traceback
 }
 
-fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>)
+fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>) -> (Vec<char>, Vec<char>)
 {
     let mut x: Vec<char> = Vec::new();
     let mut y: Vec<char> = Vec::new();
@@ -145,23 +145,27 @@ fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>)
                 i = i - 1;
                 j = j - 1;
             },
-            'e' => {
-                break;
-            },
             _ => {
                 break;
             }
         }
     }
 
-    while let Some(n) = x.pop() {
-        print!("{}\t", n);
+    (x, y)
+}
+
+fn print_alignment(seq_1: &mut Vec<char>, seq_2: &mut Vec<char>)
+{
+    while let Some(n) = seq_1.pop()
+    {
+        print!("{}", n);
     }
 
     print!("\n");
 
-    while let Some(n) = y.pop() {
-        print!("{}\t", n);
+    while let Some(n) = seq_2.pop()
+    {
+        print!("{}", n);
     }
 
     print!("\n");
@@ -172,7 +176,8 @@ fn main()
     let seq_1: String = String::from("ACGGCTC");
     let seq_2: String = String::from("ATGGCCTC");
 
-    let (matrix, traceback) = align(&seq_1, &seq_2);
+    let traceback = align(&seq_1, &seq_2);
+    let (mut x, mut y) = render_alignment(&seq_1, &seq_2, &traceback);
 
-    render_alignment(&seq_1, &seq_2, &traceback);
+    print_alignment(&mut x, &mut y);
 }
