@@ -79,12 +79,12 @@ fn new_traceback(x: usize, y: usize) -> Vec<Vec<char>>
         matrix[n][0] = 'u';
     }
 
-    matrix[0][0] = 'd';
+    matrix[0][0] = 'e';
 
     matrix
 }
 
-fn align(seq_1: &String, seq_2: &String) -> String
+fn align(seq_1: &String, seq_2: &String) -> (Vec<Vec<isize>>, Vec<Vec<char>>)
 {
     let mut matrix: Vec<Vec<isize>> = new_matrix(seq_1.len(), seq_2.len());
     let mut traceback: Vec<Vec<char>> = new_traceback(seq_1.len(), seq_2.len());
@@ -117,7 +117,48 @@ fn align(seq_1: &String, seq_2: &String) -> String
     debug_matrix(&seq_1, &seq_2, &matrix);
     //debug_matrix(&seq_1, &seq_2, traceback);
     
-    String::new()
+    (matrix, traceback)
+}
+
+fn render_alignment(seq_1: &String, seq_2: &String, matrix: &Vec<Vec<isize>>, traceback: &Vec<Vec<char>>)
+{
+    let mut x: Vec<char> = Vec::new();
+    let mut y: Vec<char> = Vec::new();
+
+    let mut i: usize = seq_2.len();
+    let mut j: usize = seq_1.len();
+
+    while i > 0 || j > 0
+    {
+        match traceback[i][j]
+        {
+            'l' => {
+                x.push('-');
+                y.push(seq_1.chars().nth(j - 1).unwrap());
+                j = j - 1;
+            },
+            'u' => {
+                x.push(seq_2.chars().nth(i - 1).unwrap());
+                y.push('-');
+                i = i - 1;
+            },
+            'd' => {
+                x.push(seq_2.chars().nth(i - 1).unwrap());
+                y.push(seq_1.chars().nth(j - 1).unwrap());
+                i = i - 1;
+                j = j - 1;
+            },
+            'e' => {
+                break;
+            },
+            _ => {
+                break;
+            }
+        }
+    }
+
+    println!("{:?}", x);
+    println!("{:?}", y);
 }
 
 fn main()
@@ -125,5 +166,7 @@ fn main()
     let seq_1: String = String::from("ACGGCTC");
     let seq_2: String = String::from("ATGGCCTC");
 
-    let _map = align(&seq_1, &seq_2);
+    let (matrix, traceback) = align(&seq_1, &seq_2);
+
+    render_alignment(&seq_1, &seq_2, &matrix, &traceback);
 }
