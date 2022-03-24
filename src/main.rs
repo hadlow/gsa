@@ -117,10 +117,11 @@ fn align(seq_1: &String, seq_2: &String) -> Vec<Vec<char>>
     traceback
 }
 
-fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>) -> (Vec<char>, Vec<char>)
+fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>) -> (Vec<char>, Vec<char>, Vec<char>)
 {
     let mut x: Vec<char> = Vec::new();
     let mut y: Vec<char> = Vec::new();
+    let mut d: Vec<char> = Vec::new();
 
     let mut i: usize = seq_2.len();
     let mut j: usize = seq_1.len();
@@ -132,16 +133,19 @@ fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>) 
             'l' => {
                 x.push('-');
                 y.push(seq_1.chars().nth(j - 1).unwrap());
+                d.push(' ');
                 j = j - 1;
             },
             'u' => {
                 x.push(seq_2.chars().nth(i - 1).unwrap());
                 y.push('-');
+                d.push('.');
                 i = i - 1;
             },
             'd' => {
                 x.push(seq_2.chars().nth(i - 1).unwrap());
                 y.push(seq_1.chars().nth(j - 1).unwrap());
+                d.push('|');
                 i = i - 1;
                 j = j - 1;
             },
@@ -151,12 +155,19 @@ fn render_alignment(seq_1: &String, seq_2: &String, traceback: &Vec<Vec<char>>) 
         }
     }
 
-    (x, y)
+    (x, y, d)
 }
 
-fn print_alignment(seq_1: &mut Vec<char>, seq_2: &mut Vec<char>)
+fn print_alignment(seq_1: &mut Vec<char>, seq_2: &mut Vec<char>, diff: &mut Vec<char>)
 {
     while let Some(n) = seq_1.pop()
+    {
+        print!("{}", n);
+    }
+
+    print!("\n");
+
+    while let Some(n) = diff.pop()
     {
         print!("{}", n);
     }
@@ -177,7 +188,7 @@ fn main()
     let seq_2: String = String::from("ATGGCCTC");
 
     let traceback = align(&seq_1, &seq_2);
-    let (mut x, mut y) = render_alignment(&seq_1, &seq_2, &traceback);
+    let (mut x, mut y, mut d) = render_alignment(&seq_1, &seq_2, &traceback);
 
-    print_alignment(&mut x, &mut y);
+    print_alignment(&mut x, &mut y, &mut d);
 }
